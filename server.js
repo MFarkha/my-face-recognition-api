@@ -1,95 +1,112 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcryptjs');
-
-
-const database = {
-    users: [
-        {
-            id: "1",
-            firstname: "John",
-            password: "$2a$10$sSYqOsAtO9IXIJ6ECVfDwuGiaWVgUaog/7yBZ2.LD/rUFxrd.taBy", // pass123
-            email: "john@company.com",
-            entries: 0,
-            joined: new Date()
-        },
-        {
-            id: "2",
-            firstname: "Sally",
-            password: "$2a$10$bWTGGrb6PNz1DjNLk5gIueSoSwSE1m81Cud2mGm3ZEpW37yrxagja", // jkdf123
-            email: "sally@company.com",
-            entries: 0,
-            joined: new Date()
-        },
-        {
-            id: "3",
-            firstname: "Ken",
-            password: "$2a$10$zfyxqgg5bYA7eEk0p7qK8.mCmzQjSuCLwvCkS8hRnmZlAQYIZms4q", // 7g43kdf 
-            email: "ken@company.com",
-            entries: 0,
-            joined: new Date()
-        }
-    ],
-    login: {
-        id: "21",
-        hash: '',
-        email: "john@company.com"
+const cors = require('cors');
+const knex = require('knex')
+const db = knex ({
+    client: 'pg',
+    connection: {
+      host : '127.0.0.1',
+      port : 5432,
+      user : '',
+      password : '',
+      database : 'smart-brain'
     }
-}
+  });
+
 const app = express();
 app.use(bodyParser.json());
+app.use(cors());
 
 app.get('/', (req,res)=> {
-    res.send(database.users);
+    res.status(400).json('wrong route');
 })
+
 app.post('/signin', (req,res) => {
     const { email, password } = req.body;
-    const foundUser = database.users.find(user => (user.email === email && bcrypt.compareSync(password, user.password)));
-
-    if (foundUser) {
-        res.json('signed in!');
-    } else {
-        res.status(400).json('error logging in');
-    }
+    db.select('hash').from('login').where('email', email)
+    .then(data => {
+        const isValidUser = bcrypt.compareSync(password, data[0].hash);
+        if (isValidUser) {
+            db.where('email', email).select('*').from('users')
+            .then(user => {
+                if (user.length) {
+                    res.json(user[0]);
+                } else {
+                    res.status(400).json('no such user');
+                }
+            })
+            .catch(err => {
+                res.status(400).json('error getting user');
+            })
+        } else {
+            res.status(400).json('wrong credentials');
+        }
+    })
+    .catch(err => {
+        res.status(400).json('wrong credentials');
+    })
 });
 
 app.post('/register', (req, res) => {
     const { firstname, password, email } = req.body;
-    database.users.push({
-        id: "4",
-        firstname: firstname,
-        email: email,
-        entries: 0,
-        joined: new Date()
-    });
-    const newUser = database.users[database.users.length-1];
     const hash = bcrypt.hashSync(password, 10);
-    newUser.password = hash;
-    res.json(newUser);
+
+    db.transaction(trx => {
+        trx.insert({
+            hash: hash,
+            email: email
+        })
+        .into('login')
+        .returning('email')
+        .then(data => {
+            return trx('users').returning('*').insert({
+                firstname: firstname,
+                email: data[0].email,
+                entries: 0,
+                joined: new Date()
+            })
+            .then(user => {
+                res.json(user[0]);
+            })
+        })
+        .then(trx.commit)
+        .catch(trx.rollback)
+    })
+    .catch(err => {
+        res.status(400).json('unable to register');
+    });
+
+
 })
 
 app.get('/profile/:id', (req, res) => {
     const { id } = req.params;
-    const foundUser = database.users.find(user => (user.id === id));
-    if (foundUser) {
-        res.json(foundUser);
-    } else {
-        res.status(404).json('no such user');
-    }
+    db.where('id', id).select('*').from('users')
+    .then(user => {
+        if (user.length) {
+            res.json(user[0]);
+        } else {
+            res.status(400).json('no such user');
+        }
+    })
+    .catch(err => {
+        res.status(400).json('error getting user');
+    })
 });
 
 app.put('/image', (req,res) => {
     const { id } = req.body;
-    const foundUserIdx = database.users.findIndex(user => (user.id === id));
-    if (foundUserIdx>-1) {
-        database.users[foundUserIdx].entries += 1;
-        res.json(database.users[foundUserIdx]);
-    } else {
-        res.status(404).json('no such user');
-    }
+    db('users').returning('entries').where('id', id).increment('entries', 1)
+    .then(data => {
+        res.json(data[0].entries);
+    })
+    .catch(err => {
+        res.status(400).json('error updating entries attribute');
+    })
 });
 
 app.listen(3001, ()=> {
-    console.log('my-face-recognition-api is running on port 3001');
+    console.log('The app my-face-recognition-api is running on port 3001');
 })
 
