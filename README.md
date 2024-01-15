@@ -15,7 +15,7 @@ Example for postgres:
 createdb 'smart-brain'
 type 'psql' to execute these sql commands:
 
-CREATE TABLE users (id serial PRIMARY KEY, name VARCHAR(100), email TEXT UNIQUE NOT NULL, entries BIGINT DEFAULT 0, joined TIMESTAMP NOT NULL);
+CREATE TABLE users (id serial PRIMARY KEY, firstname VARCHAR(100), email TEXT UNIQUE NOT NULL, entries BIGINT DEFAULT 0, joined TIMESTAMP NOT NULL);
 CREATE TABLE login (id serial PRIMARY KEY, hash VARCHAR(100), email TEXT UNIQUE NOT NULL);
 
 SQL builder (node.js module) is knex.js (along with 'pg' module for database access from nodejs)
@@ -36,3 +36,6 @@ Create/modify ".env" file:
 CLARIFAI_PAT=your pat
 CLARIFAI_USER_ID=your user id
 CLARIFAI_APP_ID=your app id
+
+3. To prepare for build:
+<!-- git archive -v -o my-face-recognition-api.zip --format=zip HEAD -->

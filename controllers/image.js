@@ -1,4 +1,4 @@
-// require('dotenv').config();
+require('dotenv').config();
 
 const setupClarifai = (imageUrl) => {
     const {CLARIFAI_PAT, CLARIFAI_USER_ID, CLARIFAI_APP_ID} = process.env;

@@ -7,7 +7,7 @@ const register = require('./controllers/register');
 const signin = require('./controllers/signin');
 const profile = require('./controllers/profile');
 const image = require('./controllers/image');
-// require('dotenv').config();
+require('dotenv').config();
 
 const db = knex ({
     client: process.env.DB_CLIENT,
@@ -16,7 +16,8 @@ const db = knex ({
       port : process.env.DB_PORT,
       user : process.env.DB_USER,
       password : process.env.DB_PASSWORD,
-      database : process.env.DB_DATABASE_NAME
+      database : process.env.DB_DATABASE_NAME,
+      ssl: { rejectUnauthorized: false }  // required to connect SSL only self-signed DB (like AWS RDS Postgres)
     }
   });
 
@@ -25,18 +26,18 @@ app.use(bodyParser.json());
 app.use(cors());
 
 app.get('/', (req,res)=> {
-    res.status(400).json('wrong route');
+    res.json('wrong route');
 })
 
-app.post('/signin', (req,res) => { signin.handleSignin(req, res, db, bcrypt) });
+app.post('/api/signin', (req,res) => { signin.handleSignin(req, res, db, bcrypt) });
 
-app.post('/register', (req, res) => { register.handleRegister(req, res, db, bcrypt) });
+app.post('/api/register', (req, res) => { register.handleRegister(req, res, db, bcrypt) });
 
-app.get('/profile/:id', (req, res) => { profile.handleProfileGet(req, res, db) });
+app.get('/api/profile/:id', (req, res) => { profile.handleProfileGet(req, res, db) });
 
-app.put('/image', (req,res) => { image.handleImage(req, res, db) });
+app.put('/api/image', (req,res) => { image.handleImage(req, res, db) });
 
-app.post('/imageurl', image.handleApiCall);
+app.post('/api/imageurl', image.handleApiCall);
 
 app.listen(3001, ()=> {
     console.log('The app my-face-recognition-api is running on port 3001');

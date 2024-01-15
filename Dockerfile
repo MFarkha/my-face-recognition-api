@@ -9,7 +9,7 @@ COPY controllers/* /usr/app/controllers
 
 WORKDIR /usr/app
 
-EXPOSE 3000
+EXPOSE 3001
 
 RUN npm install
 CMD ["node", "server.js"]
