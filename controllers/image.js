@@ -1,21 +1,18 @@
+require('dotenv').config();
+
 const setupClarifai = (imageUrl) => {
-    const PAT = '8e814405291e431ab755b4e1a34acf90';
-    // Specify the correct user_id/app_id pairings
-    // Since you're making inferences outside your app's scope
-    const USER_ID = 'famaten';
-    const APP_ID = 'my-smart-brain-app';
+    const {CLARIFAI_PAT, CLARIFAI_USER_ID, CLARIFAI_APP_ID} = process.env;
     const MODEL_ID = 'face-detection';
-    const IMAGE_URL = imageUrl;
     const raw = JSON.stringify({
       "user_app_id": {
-          "user_id": USER_ID,
-          "app_id": APP_ID
+          "user_id": CLARIFAI_USER_ID,
+          "app_id": CLARIFAI_APP_ID
       },
       "inputs": [
           {
               "data": {
                   "image": {
-                      "url": IMAGE_URL
+                      "url": imageUrl
                   }
               }
           }
@@ -25,7 +22,7 @@ const setupClarifai = (imageUrl) => {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
-            'Authorization': 'Key ' + PAT
+            'Authorization': 'Key ' + CLARIFAI_PAT
         },
         body: raw
     };
