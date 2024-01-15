@@ -33,4 +33,6 @@ DB_DATABASE_NAME=smart-brain
 2. Clarifai AI face detection service
 You need to provide API KEY for the model (https://clarifai.com/clarifai/main/models/face-detection).
 Create/modify ".env" file:
-CLARIFAI_API_KEY=you api key is here
+CLARIFAI_PAT=your pat
+CLARIFAI_USER_ID=your user id
+CLARIFAI_APP_ID=your app id
