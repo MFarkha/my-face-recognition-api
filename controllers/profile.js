@@ -11,6 +11,7 @@ const handleProfileGet = (req, res, db) => {
     .catch(err => {
         if (process.env.APP_DEBUG) {
             console.log('unable to select user info from db: ', err);
+            console.log('ENV: ', process.env);
         }
         res.status(400).json('error getting user');
     })

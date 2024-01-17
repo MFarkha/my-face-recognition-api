@@ -18,6 +18,7 @@ const handleSignin = (req, res, db, bcrypt) => {
             .catch(err => {
                 if (process.env.APP_DEBUG) {
                     console.log('unable to select from DB: ', err);
+                    console.log('ENV: ', process.env);
                 }
                 res.status(400).json('error getting user');
             })
@@ -28,6 +29,7 @@ const handleSignin = (req, res, db, bcrypt) => {
     .catch(err => {
         if (process.env.APP_DEBUG) {
             console.log('unable to select from DB: ', err);
+            console.log('ENV: ', process.env);
         }
         res.status(400).json('error getting user');
     })

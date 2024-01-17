@@ -39,6 +39,7 @@ const handleApiCall = (req, res) => {
     .catch(err => {
         if (process.env.APP_DEBUG) {
             console.log('unable to receive api call from clarifai: ', err);
+            console.log('ENV: ', process.env);
         }
         res.status(400).json('error receiving api call from clarifai');
     })
@@ -53,6 +54,7 @@ const handleImage = (req, res, db) => {
     .catch(err => {
         if (process.env.APP_DEBUG) {
             console.log('unable to update user info in db: ', err);
+            console.log('ENV: ', process.env);
         }
         res.status(400).json('error updating entries attribute');
     })

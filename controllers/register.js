@@ -27,6 +27,7 @@ const handleRegister = (req, res, db, bcrypt) => {
             trx.rollback();
             if (process.env.APP_DEBUG) {
                 console.log('unable to commit insert transaction into db: ', err);
+                console.log('ENV: ', process.env);
             }
             res.status(400).json('unable to register');
         })
@@ -34,6 +35,7 @@ const handleRegister = (req, res, db, bcrypt) => {
     .catch(err => {
         if (process.env.APP_DEBUG) {
             console.log('unable to execute DB transaction ', err);
+            console.log('ENV: ', process.env);
         }
         res.status(400).json('unable to register');
     });
