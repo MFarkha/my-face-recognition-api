@@ -29,6 +29,10 @@ app.get('/', (req,res)=> {
     res.json('wrong route');
 })
 
+app.get('/api/health', (req,res)=> {
+  res.json('OK');
+})
+
 app.post('/api/signin', (req,res) => { signin.handleSignin(req, res, db, bcrypt) });
 
 app.post('/api/register', (req, res) => { register.handleRegister(req, res, db, bcrypt) });

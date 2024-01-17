@@ -1,0 +1,23 @@
+version: 0.0
+Resources:
+  - TargetService:
+      Type: AWS::ECS::Service
+      Properties:
+        TaskDefinition: "arn:aws:ecs:us-east-1:111222333444:task-definition/my-task-definition-family-name:1"
+        # LoadBalancerInfo:
+        #   ContainerName: "SampleApplicationName"
+        #   ContainerPort: 80
+# Optional properties
+        # CapacityProviderStrategy:
+        #   - Base: 1
+        #     CapacityProvider: "FARGATE_SPOT"
+        #     Weight: 2
+        #   - Base: 0
+        #     CapacityProvider: "FARGATE"
+        #     Weight: 1
+# Hooks:
+#   - BeforeInstall: "LambdaFunctionToValidateBeforeInstall"
+#   - AfterInstall: "LambdaFunctionToValidateAfterInstall"
+#   - AfterAllowTestTraffic: "LambdaFunctionToValidateAfterTestTrafficStarts"
+#   - BeforeAllowTraffic: "LambdaFunctionToValidateBeforeAllowingProductionTraffic"
+#   - AfterAllowTraffic: "LambdaFunctionToValidateAfterAllowingProductionTraffic"

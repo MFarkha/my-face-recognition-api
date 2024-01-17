@@ -1,0 +1,65 @@
+{
+    "containerDefinitions": [ 
+       { 
+          "essential": true,
+          "image": "famaten/my-face-recognition-dev",
+          "name": "my-fra-api-app",
+          "portMappings": [ 
+             { 
+                "containerPort": 3001,
+                "hostPort": 3001,
+                "protocol": "tcp"
+             }
+          ],
+          "secrets": [
+            {
+                "name": "CLARIFAI_USER_ID",
+                "valueFrom": "arn:aws:secretsmanager:ca-central-1:146966035049:secret:dev/my-face-recognition-api:CLARIFAI_USER_ID"
+            },
+            {
+                "name": "CLARIFAI_APP_ID",
+                "valueFrom": "arn:aws:secretsmanager:ca-central-1:146966035049:secret:dev/my-face-recognition-api:CLARIFAI_APP_ID"
+            },
+            {
+                "name": "DB_CLIENT",
+                "valueFrom": "arn:aws:secretsmanager:ca-central-1:146966035049:secret:dev/my-face-recognition-api:DB_CLIENT"
+            },
+            {
+                "name": "DB_HOST",
+                "valueFrom": "arn:aws:secretsmanager:ca-central-1:146966035049:secret:dev/my-face-recognition-api:DB_HOST"
+            },
+            {
+                "name": "DB_USER",
+                "valueFrom": "arn:aws:secretsmanager:ca-central-1:146966035049:secret:dev/my-face-recognition-api:DB_USER"
+            },
+            {
+                "name": "DB_PASSWORD",
+                "valueFrom": "arn:aws:secretsmanager:ca-central-1:146966035049:secret:dev/my-face-recognition-api:DB_PASSWORD"
+            },
+            {
+                "name": "DB_DATABASE_NAME",
+                "valueFrom": "arn:aws:secretsmanager:ca-central-1:146966035049:secret:dev/my-face-recognition-api:DB_DATABASE_NAME"
+            }
+        ],
+        "logConfiguration": { 
+            "logDriver": "awslogs",
+            "options": { 
+               "awslogs-group" : "/ecs/fargate-task-definition",
+               "awslogs-region": "ca-central-1",
+               "awslogs-stream-prefix": "ecs"
+            }
+         }
+      }
+    ],
+    "cpu": "256",
+    "executionRoleArn": "arn:aws:iam::146966035049:role/ecsTaskExecutionRole",
+    "family": "my-fra-td",
+    "memory": "512",
+    "networkMode": "awsvpc",
+    "runtimePlatform": {
+         "operatingSystemFamily": "LINUX"
+     },
+    "requiresCompatibilities": [ 
+        "FARGATE" 
+     ]
+}
