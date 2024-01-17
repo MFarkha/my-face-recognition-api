@@ -1,0 +1,15 @@
+apiVersion: vpcresources.k8s.aws/v1beta1
+kind: SecurityGroupPolicy
+metadata:
+  name: my-security-group-policy
+  namespace: default
+spec:
+  podSelector: 
+    matchLabels:
+      role: my-enable-sg-for-pods # you can use this name for the role to enable security group support for pods
+  securityGroups:
+    groupIds:
+      - sg-052ff614d47db3693 # Security group attached to instances (fargate pod) to securely connect to RDS database 
+      - sg-0fd1e7d57e0518ba5 # default security group to allow outbound traffic (for internet access)
+      - sg-09101fa7d7129e831 # Communication between all nodes in the cluster - VERY IMPORTANT
+      - sg-06ec5653d7ade22c0 # Communication between the control plane and worker nodegroups - VERY IMPORTANT

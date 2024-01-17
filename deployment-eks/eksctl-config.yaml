@@ -1,0 +1,37 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: my-face-recognition-cluster
+  region: ca-central-1
+  version: "1.28" # or chooose the latest version
+
+iam:
+  withOIDC: true
+
+addons:
+- name: vpc-cni
+
+vpc:
+  id: "vpc-00c7118ed20fe71bf"  # (optional, must match VPC ID used for each subnet below)
+  cidr: "172.31.0.0/16"       # (optional, must match CIDR used by the given VPC)
+  subnets:
+    # must provide 'private' and/or 'public' subnets by availability zone as shown
+    private:
+      ca-central-1a:
+        id: "subnet-03cbe3889f8b61a43"
+        cidr: "172.31.10.0/24" # (optional, must match CIDR used by the given subnet)
+
+      ca-central-1b:
+        id: "subnet-03a6c6b445562628c"
+        cidr: "172.31.11.0/24"  # (optional, must match CIDR used by the given subnet)
+
+fargateProfiles:
+  - name: fp-default
+    selectors:
+      # All workloads in the "default" Kubernetes namespace will be
+      # scheduled onto Fargate:
+      - namespace: default
+      # All workloads in the "kube-system" Kubernetes namespace will be
+      # scheduled onto Fargate:
+      - namespace: kube-system
