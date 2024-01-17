@@ -12,16 +12,16 @@ const handleSignin = (req, res, db, bcrypt) => {
                 if (user.length) {
                     res.json(user[0]);
                 } else {
-                    res.status(400).json('no such user');
+                    res.status(400).json('wrong credentials');
                 }
             })
             .catch(err => {
+                if (process.env.APP_DEBUG) {
+                    console.log('unable to select from DB: ', err);
+                }
                 res.status(400).json('error getting user');
             })
         } else {
-            if (process.env.APP_DEBUG) {
-                console.log('unable to select from DB: ', err);
-            }
             res.status(400).json('wrong credentials');
         }
     })
@@ -29,7 +29,7 @@ const handleSignin = (req, res, db, bcrypt) => {
         if (process.env.APP_DEBUG) {
             console.log('unable to select from DB: ', err);
         }
-        res.status(400).json('wrong credentials');
+        res.status(400).json('error getting user');
     })
 };
 

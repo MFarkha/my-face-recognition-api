@@ -37,7 +37,6 @@ const handleApiCall = (req, res) => {
         res.json(data);
     })
     .catch(err => {
-        // console.log(err);
         if (process.env.APP_DEBUG) {
             console.log('unable to receive api call from clarifai: ', err);
         }
