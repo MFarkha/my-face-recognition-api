@@ -38,6 +38,9 @@ const handleApiCall = (req, res) => {
     })
     .catch(err => {
         // console.log(err);
+        if (process.env.APP_DEBUG) {
+            console.log('unable to receive api call from clarifai: ', err);
+        }
         res.status(400).json('error receiving api call from clarifai');
     })
 }
@@ -49,6 +52,9 @@ const handleImage = (req, res, db) => {
         res.json(data[0].entries);
     })
     .catch(err => {
+        if (process.env.APP_DEBUG) {
+            console.log('unable to update user info in db: ', err);
+        }
         res.status(400).json('error updating entries attribute');
     })
 };

@@ -19,10 +19,16 @@ const handleSignin = (req, res, db, bcrypt) => {
                 res.status(400).json('error getting user');
             })
         } else {
+            if (process.env.APP_DEBUG) {
+                console.log('unable to select from DB: ', err);
+            }
             res.status(400).json('wrong credentials');
         }
     })
     .catch(err => {
+        if (process.env.APP_DEBUG) {
+            console.log('unable to select from DB: ', err);
+        }
         res.status(400).json('wrong credentials');
     })
 };

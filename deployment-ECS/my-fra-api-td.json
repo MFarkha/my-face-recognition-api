@@ -14,41 +14,51 @@
           "secrets": [
             {
                 "name": "CLARIFAI_USER_ID",
-                "valueFrom": "arn:aws:secretsmanager:ca-central-1:146966035049:secret:dev/my-face-recognition-api:CLARIFAI_USER_ID"
+                "valueFrom": "arn:aws:secretsmanager:ca-central-1:146966035049:secret:dev/my-face-recognition-api-igI1Y4:CLARIFAI_USER_ID::"
             },
             {
                 "name": "CLARIFAI_APP_ID",
-                "valueFrom": "arn:aws:secretsmanager:ca-central-1:146966035049:secret:dev/my-face-recognition-api:CLARIFAI_APP_ID"
+                "valueFrom": "arn:aws:secretsmanager:ca-central-1:146966035049:secret:dev/my-face-recognition-api-igI1Y4:CLARIFAI_APP_ID::"
             },
             {
                 "name": "DB_CLIENT",
-                "valueFrom": "arn:aws:secretsmanager:ca-central-1:146966035049:secret:dev/my-face-recognition-api:DB_CLIENT"
+                "valueFrom": "arn:aws:secretsmanager:ca-central-1:146966035049:secret:dev/my-face-recognition-api-igI1Y4:DB_CLIENT::"
             },
             {
                 "name": "DB_HOST",
-                "valueFrom": "arn:aws:secretsmanager:ca-central-1:146966035049:secret:dev/my-face-recognition-api:DB_HOST"
+                "valueFrom": "arn:aws:secretsmanager:ca-central-1:146966035049:secret:dev/my-face-recognition-api-igI1Y4:DB_HOST::"
             },
             {
                 "name": "DB_USER",
-                "valueFrom": "arn:aws:secretsmanager:ca-central-1:146966035049:secret:dev/my-face-recognition-api:DB_USER"
+                "valueFrom": "arn:aws:secretsmanager:ca-central-1:146966035049:secret:dev/my-face-recognition-api-igI1Y4:DB_USER::"
             },
             {
                 "name": "DB_PASSWORD",
-                "valueFrom": "arn:aws:secretsmanager:ca-central-1:146966035049:secret:dev/my-face-recognition-api:DB_PASSWORD"
+                "valueFrom": "arn:aws:secretsmanager:ca-central-1:146966035049:secret:dev/my-face-recognition-api-igI1Y4:DB_PASSWORD::"
             },
             {
                 "name": "DB_DATABASE_NAME",
-                "valueFrom": "arn:aws:secretsmanager:ca-central-1:146966035049:secret:dev/my-face-recognition-api:DB_DATABASE_NAME"
+                "valueFrom": "arn:aws:secretsmanager:ca-central-1:146966035049:secret:dev/my-face-recognition-api-igI1Y4:DB_DATABASE_NAME::"
             }
         ],
         "logConfiguration": { 
             "logDriver": "awslogs",
             "options": { 
-               "awslogs-group" : "/ecs/fargate-task-definition",
+               "awslogs-group" : "/ecs/my-fra-api-tdc",
                "awslogs-region": "ca-central-1",
-               "awslogs-stream-prefix": "ecs"
+               "awslogs-create-group": "true",
+               "awslogs-stream-prefix": "container"
             }
-         }
+        },
+        "healthCheck": {
+            "retries": 3,
+            "command": [
+              "CMD-SHELL",
+              "wget --no-verbose --tries=1 --spider http://localhost:3001 || exit 1"
+            ],
+            "timeout": 5,
+            "interval": 5
+        }
       }
     ],
     "cpu": "256",

@@ -43,7 +43,9 @@ app.put('/api/image', (req,res) => { image.handleImage(req, res, db) });
 
 app.post('/api/imageurl', image.handleApiCall);
 
-app.listen(3001, ()=> {
-    console.log('The app my-face-recognition-api is running on port 3001');
+APP_PORT = process.env.APP_PORT || 3001;
+
+app.listen(APP_PORT, ()=> {
+    console.log(`The app my-face-recognition-api is running on port ${APP_PORT}`);
 })
 
