@@ -1,3 +1,6 @@
+This is NodeJS backend for an application named "my-face-recognition"
+https://github.com/MFarkha/my-face-recognition
+
 Description of API:
 /signin - POST success/fail
 /register - POST new user/fail
@@ -9,21 +12,15 @@ Create .env file to put required variables for database and face detection servi
 
 Required infrastructure:
 1. Database based on POSTGRES (or any other relational database compatible with knex.js sql builder module):
-<!--
+
 Options to create db schema:
-- a manual method (invoking psql client)
-    Example for postgres db creation:
-
-    createdb 'smart-brain'
+- execute postgres commands manually:
+    createdb 'smart-brain' - to create postgres db
     type 'psql' to execute these sql commands:
-
     CREATE TABLE users (id serial PRIMARY KEY, firstname VARCHAR(100), email TEXT UNIQUE NOT NULL, entries BIGINT DEFAULT 0, joined TIMESTAMP NOT NULL);
     CREATE TABLE login (id serial PRIMARY KEY, hash VARCHAR(100), email TEXT UNIQUE NOT NULL);
-- run application with APP_INIT=1 variable it will create db schema
-SQL builder (node.js module) is knex.js (along with 'pg' module for database access from nodejs)
-
-Example for env variables (to put into .env file):
-
+- run the application along with APP_INIT=1 variable to let it to create db schema
+- ENV variables (to put into .env file):
 DB_CLIENT=pg
 DB_HOST=127.0.0.1
 DB_PORT=5432
@@ -31,7 +28,6 @@ DB_USER=
 DB_PASSWORD=
 DB_DATABASE_NAME=smart-brain
 
--->
 2. Clarifai AI face detection service
 You need to provide API KEY for the model (https://clarifai.com/clarifai/main/models/face-detection).
 Create/modify ".env" file:
@@ -39,8 +35,9 @@ CLARIFAI_PAT=your pat
 CLARIFAI_USER_ID=your user id
 CLARIFAI_APP_ID=your app id
 
-3. To prepare for build:
-<!-- git archive -v -o my-face-recognition-api.zip --format=zip HEAD -->
+3. To prepare for the build:
+Leverage 'buildspec.yaml' file located at the root of the application to configure AWS CodeBuild project to build and push a docker image into Docker Hub registry
+You would need to create a secret to contain Docker Hub login credentials
 
 4. The rest of environment variables are (with its default values)
 
