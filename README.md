@@ -10,8 +10,8 @@ Description of API:
 How to start a server:
 "npm start".
 
-Required infrastructure (you might build it - look into deployment-* directories):
-1. Database based on POSTGRES (or any other relational database compatible with knex.js sql builder module):
+Required steps before:
+1. Database based on POSTGRES (or any other relational database compatible with knex.js sql builder module) - might be deployed for you: just check 'deployment-*' directories:
 Options to create db schema:
 - execute postgres commands manually:
 createdb 'smart-brain' - to create postgres db
@@ -28,15 +28,14 @@ DB_PASSWORD=
 DB_DATABASE_NAME=smart-brain
 
 2. Clarifai AI face detection service
-You need to provide API KEY for the model (https://clarifai.com/clarifai/main/models/face-detection).
-Create/modify ".env" file:
+You need to provide the information for the model (https://clarifai.com/clarifai/main/models/face-detection) to work.
+Create/modify ".env" file (or AWS Secret):
 CLARIFAI_PAT=your pat
 CLARIFAI_USER_ID=your user id
 CLARIFAI_APP_ID=your app id
 
-3. To prepare for the build:
-Leverage 'buildspec.yaml' file located at the root of the application to configure AWS CodeBuild project to build and push a docker image into Docker Hub registry
-You would need to create a secret to contain Docker Hub login credentials
+3. Container runtime compute platform (like AWS EKS or AWS ECS) - might be deployed for you: just check 'deployment-*' directories::
+Hint: leverage 'buildspec.yaml' located at the root of the application to configure AWS CodeBuild project to build and push a docker image into Docker Hub registry. You would need to create a secret to contain Docker Hub login credentials.
 
 4. The rest of environment variables are (with its default values):
 APP_PORT=3001 - application port to listen for requests
