@@ -1,5 +1,4 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const bcrypt = require('bcryptjs');
 const cors = require('cors');
 const knex = require('knex')
@@ -10,7 +9,7 @@ const image = require('./controllers/image');
 const initdb = require('./controllers/initdb');
 require('dotenv').config();
 
-const db = knex ({
+let dbConnection = {
   client: process.env.DB_CLIENT,
   // acquireConnectionTimeout: 1000,
   pool: { min: 0, max: 7 },
@@ -19,13 +18,19 @@ const db = knex ({
     port : process.env.DB_PORT,
     user : process.env.DB_USER,
     password : process.env.DB_PASSWORD,
-    database : process.env.DB_DATABASE_NAME,
-    ssl: { rejectUnauthorized: false }  // required to connect SSL only self-signed DB (like AWS RDS Postgres)
+    database : process.env.DB_DATABASE_NAME
   }
-});
+}
+// required to connect SSL only self-signed DB (like AWS RDS Postgres)
+if (!process.env.DB_SSL_DISABLED) {
+  dbConnection.ssl = { rejectUnauthorized: false };
+}
+
+const db = knex(dbConnection);
 
 const app = express();
-app.use(bodyParser.json());
+app.use(express.json());
+
 app.use(cors());
 
 app.get('/', (req,res)=> {
