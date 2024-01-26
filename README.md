@@ -26,6 +26,7 @@ DB_PORT=5432
 DB_USER=
 DB_PASSWORD=
 DB_DATABASE_NAME=smart-brain
+DB_SSL_DISABLED= set this variable up if you DO NOT want to connect via SSL only self-signed DB (like AWS RDS Postgres)
 
 2. Clarifai AI face detection service
 You need to provide the information for the model (https://clarifai.com/clarifai/main/models/face-detection) to work.
