@@ -7,6 +7,8 @@ const signin = require('./controllers/signin');
 const profile = require('./controllers/profile');
 const image = require('./controllers/image');
 const initdb = require('./controllers/initdb');
+const morgan = require('morgan');
+
 require('dotenv').config();
 
 let dbConnection = {
@@ -25,13 +27,13 @@ let dbConnection = {
 if (!process.env.DB_SSL_DISABLED) {
   dbConnection.ssl = { rejectUnauthorized: false };
 }
-
 const db = knex(dbConnection);
 
 const app = express();
 app.use(express.json());
 
 app.use(cors());
+app.use(morgan('combined'));
 
 app.get('/', (req,res)=> {
   res.json('wrong route');
