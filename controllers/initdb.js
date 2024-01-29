@@ -21,7 +21,6 @@ const createSchema = (db) => {
             console.log('db schema has not initialized');
             if (process.env.APP_DEBUG) {
                 console.log('db response : ', err);
-                console.log(process.env);
                 process.exit(1);
             }
         });
@@ -41,7 +40,6 @@ const createSchema = (db) => {
             console.log('db schema has not initialized');
             if (process.env.APP_DEBUG) {
                 console.log('db response : ', err);
-                console.log(process.env);
             }
             process.exit(1);
         });
