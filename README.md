@@ -27,6 +27,8 @@ DB_USER=
 DB_PASSWORD=
 DB_DATABASE_NAME=smart-brain
 DB_SSL_DISABLED= set this variable up if you DO NOT want to connect via SSL only self-signed DB (like AWS RDS Postgres)
+REDIS_HOST=redis
+REDIS_PORT=6379
 
 2. Clarifai AI face detection service
 You need to provide the information for the model (https://clarifai.com/clarifai/main/models/face-detection) to work.
@@ -42,3 +44,4 @@ Hint: leverage 'buildspec.yaml' located at the root of the application to config
 APP_PORT=3001 - application port to listen for requests
 APP_DEBUG=undefined - application and db errors are set to be displayed
 APP_INIT=undefined () - db schema would be created (see above)
+APP_JWT_SECRET - secret for jwt tokens

@@ -11,12 +11,27 @@ const handleProfileGet = (req, res, db) => {
     .catch(err => {
         if (process.env.APP_DEBUG) {
             console.log('unable to select user info from db: ', err);
-            console.log('ENV: ', process.env);
         }
         res.status(400).json('error getting user');
     })
 };
+const handleProfileUpdate = (req, res, db) => {
+    const { id } = req.params;
+    const { firstname, age, pet } = req.body.formInput;
+    db('users')
+        .where({ id })
+        .update({ firstname })
+        .then(result => {
+            if (result) {
+                res.json('success');
+            } else {
+                res.status(400).json('unable to update');
+            }
+        })
+        .catch(err => res.status(400).json('error updating the user'))
+}
 
 module.exports = {
-    handleProfileGet: handleProfileGet
+    handleProfileGet,
+    handleProfileUpdate
 };

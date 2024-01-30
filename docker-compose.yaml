@@ -22,3 +22,11 @@ services:
       - "3001:3001"
     links:
       - postgres
+      - redis
+
+  # Redis
+  redis:
+    container_name: redis
+    image: redis
+    ports:
+      - "6379:6379"

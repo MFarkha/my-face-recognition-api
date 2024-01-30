@@ -1,16 +1,16 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const cors = require('cors');
-const knex = require('knex')
 const register = require('./controllers/register');
 const signin = require('./controllers/signin');
 const profile = require('./controllers/profile');
 const image = require('./controllers/image');
 const initdb = require('./controllers/initdb');
-const morgan = require('morgan');
+const auth = require('./controllers/authorization');
 
+// postgres
+const knex = require('knex');
 require('dotenv').config();
-
 let dbConnection = {
   client: process.env.DB_CLIENT,
   // acquireConnectionTimeout: 1000,
@@ -23,12 +23,18 @@ let dbConnection = {
     database : process.env.DB_DATABASE_NAME
   }
 }
-// required to connect SSL only self-signed DB (like AWS RDS Postgres)
+//to connect db via SSL only self-signed certificate (like at AWS RDS Postgres)
 if (!process.env.DB_SSL_DISABLED) {
-  dbConnection.ssl = { rejectUnauthorized: false };
+    dbConnection.ssl = { rejectUnauthorized: false };
 }
 const db = knex(dbConnection);
 
+// debugging express
+const morgan = require('morgan');
+
+require('dotenv').config();
+
+// express
 const app = express();
 app.use(express.json());
 
@@ -43,15 +49,12 @@ app.get('/api/health', (req,res)=> {
   res.json('OK');
 })
 
-app.post('/api/signin', (req,res) => { signin.handleSignin(req, res, db, bcrypt) });
-
+app.post('/api/signin', (req,res) => { signin.signinAuthentification(req, res, db, bcrypt) });
 app.post('/api/register', (req, res) => { register.handleRegister(req, res, db, bcrypt) });
-
-app.get('/api/profile/:id', (req, res) => { profile.handleProfileGet(req, res, db) });
-
-app.put('/api/image', (req,res) => { image.handleImage(req, res, db) });
-
-app.post('/api/imageurl', image.handleApiCall);
+app.get('/api/profile/:id', auth.requireAuth, (req, res) => { profile.handleProfileGet(req, res, db) });
+app.post('/api/profile/:id', auth.requireAuth, (req, res) => { profile.handleProfileUpdate(req, res, db) });
+app.put('/api/image', auth.requireAuth, (req,res) => { image.handleImage(req, res, db) });
+app.post('/api/imageurl', auth.requireAuth, image.handleApiCall);
 
 APP_PORT = process.env.APP_PORT || 3001;
 
@@ -59,6 +62,6 @@ if (process.env.APP_INIT) {
   initdb.createSchema(db);
 } else {
   app.listen(APP_PORT, ()=> {
-    console.log(`The app my-face-recognition-api is running on port ${APP_PORT}`);
+    console.log(`The my-face-recognition-api app is running on port ${APP_PORT}`);
   })
 }
