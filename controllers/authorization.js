@@ -9,6 +9,9 @@ const requireAuth = (req, res, next) => {
     return getAuthTokenId(token)
         .then(id => {
             if (id) {
+                if (process.env.APP_DEBUG) {
+                    console.log('id received over auth process: ', id);
+                }
                 return next();
             } else {
                 return res.status(401).json('Unathorized');

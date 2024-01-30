@@ -50,6 +50,7 @@ app.get('/api/health', (req,res)=> {
 })
 
 app.post('/api/signin', (req,res) => { signin.signinAuthentification(req, res, db, bcrypt) });
+app.get('/api/signout', auth.requireAuth, signin.handleSignOut);
 app.post('/api/register', (req, res) => { register.handleRegister(req, res, db, bcrypt) });
 app.get('/api/profile/:id', auth.requireAuth, (req, res) => { profile.handleProfileGet(req, res, db) });
 app.post('/api/profile/:id', auth.requireAuth, (req, res) => { profile.handleProfileUpdate(req, res, db) });

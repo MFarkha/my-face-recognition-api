@@ -31,7 +31,6 @@ const handleSignin = (req, res, db, bcrypt) => {
     .catch(err => {
         if (process.env.APP_DEBUG) {
             console.log('unable to select from DB: ', err);
-            console.log('ENV: ', process.env);
         }
         res.status(400).json('error getting user');
     })
@@ -42,15 +41,12 @@ const getAuthTokenId = (token) => {
         .connect()
         .then(redisClient => {
             return redisClient.get(token)
-                .then(result => {
+                .then(id => {
                     if (process.env.APP_DEBUG) {
-                        console.log('Redis get key result: ', result);
+                        console.log('getAuthTokenId-step 1: Redis get key result: ', id);
                     }
                     return redisClient.quit()
-                        .then(() =>{
-                            console.log('Redis connection closed');
-                            return result;
-                        })
+                        .then( () => id )
                         .catch((err) => console.log(err));
                 })
                 .catch(err => console.log(err))
@@ -68,12 +64,13 @@ const setToken = (token, id) => {
                         console.log('Redis set key result: ', result);
                     }
                     return redisClient.quit()
-                        .then(() => console.log('Redis connection closed'))
-                        .catch((err) => console.log(err));
+                        .catch(console.log);
                 })
                 .catch(err => console.log(err))
         });
 }
+
+
 const createSession = (user) => {
     const { email, id } = user;
     const token = signToken(email);
@@ -93,22 +90,58 @@ const signinAuthentification = (req, res, db, bcrypt) => {
         ? getAuthTokenId(authorization.split(' ')[1])
             .then(id => {
                 if (id) {
+                    if (process.env.APP_DEBUG) {
+                        console.log('signinAuthentification: Id received successfully: ', id)
+                    }
                     return res.json({ success: 'true', userId: id });
                 } else {
+                    if (process.env.APP_DEBUG) {
+                        console.log('Error getting an id from the token: ', id)
+                    }
                     return res.status(400).json('Unathorized');
                 }
             })
             .catch(err => res.status(400).json(err))
         : handleSignin(req, res, db, bcrypt)
-            .then(data => {
-                return data.id && data.email ? createSession(data) : Promise.reject(data);
+            .then(user => {
+                return user.id && user.email ? createSession(user) : Promise.reject(user);
             })
             .then(session => res.json(session))
-            .catch(err => res.status(400).json(err))
+            .catch(err => {
+                if (process.env.APP_DEBUG) {
+                    console.log('Error during signin process: ', err)
+                }
+                return res.status(400).json(err);
+            })
 }
-
+const deleteToken = (token) => {
+    return redis
+        .on('error', err => console.log('Redis Client Error', err))
+        .connect()
+        .then(redisClient => {
+            return redisClient.del(token)
+                .then(result => {
+                    if (process.env.APP_DEBUG) {
+                        console.log('Redis delete key result: ', result);
+                    }
+                    return redisClient.quit()
+                        .catch(console.log);
+                })
+                .catch(err => console.log(err))
+        });
+}
+const handleSignOut = (req, res) => {
+    const { authorization } = req.headers;
+    if (authorization){
+        return deleteToken(authorization.split(' ')[1])
+            .then((result) => res.json({ 'success': result }))
+            .catch((err) => res.status(400).json('Sign out error:', err))
+    }
+    return res.status(401).json('Unauthorized');
+}
 module.exports = {
     signinAuthentification,
     getAuthTokenId,
-    createSession
+    createSession,
+    handleSignOut
 };
