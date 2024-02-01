@@ -29,17 +29,18 @@ if (!process.env.DB_SSL_DISABLED) {
 }
 const db = knex(dbConnection);
 
-// debugging express
-const morgan = require('morgan');
-
 require('dotenv').config();
 
 // express
 const app = express();
 app.use(express.json());
-
 app.use(cors());
-app.use(morgan('combined'));
+
+// debugging express
+if (process.env.APP_DEBUG) {
+  const morgan = require('morgan');
+  app.use(morgan('combined'));
+}
 
 app.get('/', (req,res)=> {
   res.json('wrong route');

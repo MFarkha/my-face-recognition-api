@@ -2,11 +2,17 @@ require('dotenv').config();
 const jwt = require('jsonwebtoken');
 // redis
 const { createClient } = require("redis");
-const redis = createClient({ socket: {
-    host: process.env.REDIS_HOST,
-    port: process.env.REDIS_PORT
-} });
+let redisClient;
 
+const setRedisClient = () => {
+    const redis = createClient({ socket: {
+        host: process.env.REDIS_HOST,
+        port: process.env.REDIS_PORT
+    } });
+    return redis
+        .on('error', err => console.log('Redis Client Error', err))
+        .connect()
+}
 const handleSignin = (req, res, db, bcrypt) => {
     const { email, password } = req.body;
     if (!password || !email) {
@@ -36,41 +42,39 @@ const handleSignin = (req, res, db, bcrypt) => {
     })
 };
 const getAuthTokenId = (token) => {
-    return redis
-        .on('error', err => console.log('Redis Client Error: ', err))
-        .connect()
-        .then(redisClient => {
-            return redisClient.get(token)
+    if (!redisClient || !redisClient.isReady) {
+        redisClient = setRedisClient();
+    }
+    return redisClient
+        .then(rc => {
+            return rc.get(token)
                 .then(id => {
                     if (process.env.APP_DEBUG) {
                         console.log('getAuthTokenId-step 1: Redis get key result: ', id);
                     }
-                    return redisClient.quit()
-                        .then( () => id )
-                        .catch((err) => console.log(err));
+                    return id
                 })
                 .catch(err => console.log(err))
-        });
+        })
+        .catch(err => console.log('Redis connection error: ', err));
 }
-
 const setToken = (token, id) => {
-    return redis
-        .on('error', err => console.log('Redis Client Error', err))
-        .connect()
-        .then(redisClient => {
-            return redisClient.set(token, id)
+    if (!redisClient || !redisClient.isReady) {
+        redisClient = setRedisClient();
+    }
+    return redisClient
+        .then(rc => {
+            return rc.set(token, id)
                 .then(result => {
                     if (process.env.APP_DEBUG) {
                         console.log('Redis set key result: ', result);
                     }
-                    return redisClient.quit()
-                        .catch(console.log);
+                    return result
                 })
                 .catch(err => console.log(err))
-        });
+        })
+        .catch((err) => console.log('Redis connection error', err));
 }
-
-
 const createSession = (user) => {
     const { email, id } = user;
     const token = signToken(email);
@@ -78,12 +82,10 @@ const createSession = (user) => {
         .then(() => ({ success: 'true', userId: id, token }))
         .catch((err) => console.log('error setting a token:', err));
 }
-
 const signToken = (email) => {
     const jwtPayload = { email };
     return jwt.sign(jwtPayload, process.env.APP_JWT_SECRET, { expiresIn: '2days' });
 }
-
 const signinAuthentification = (req, res, db, bcrypt) => {
     const { authorization } = req.headers;
     return authorization
@@ -115,20 +117,20 @@ const signinAuthentification = (req, res, db, bcrypt) => {
             })
 }
 const deleteToken = (token) => {
-    return redis
-        .on('error', err => console.log('Redis Client Error', err))
-        .connect()
-        .then(redisClient => {
-            return redisClient.del(token)
+    if (!redisClient || !redisClient.isReady) {
+        redisClient = setRedisClient();
+    }
+    return redisClient
+        .then(rc => {
+            return rc.del(token)
                 .then(result => {
                     if (process.env.APP_DEBUG) {
                         console.log('Redis delete key result: ', result);
                     }
-                    return redisClient.quit()
-                        .catch(console.log);
                 })
                 .catch(err => console.log(err))
-        });
+        })
+        .catch((err) => console.log('Redis connection error', err));
 }
 const handleSignOut = (req, res) => {
     const { authorization } = req.headers;
