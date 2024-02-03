@@ -8,7 +8,9 @@ Description of API:
 /image - PUT  updated user info/ fail
 
 How to start a server:
-"npm start".
+- "npm start". (if you have set up a Postgres database)
+- docker-compose up --build (you have to have Docker installed, no database setup though required)
+- docker-compose down (to remove the containers)
 
 Required steps before:
 1. Database based on POSTGRES (or any other relational database compatible with knex.js sql builder module) - might be deployed for you: just check 'deployment-*' directories:

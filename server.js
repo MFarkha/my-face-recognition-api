@@ -7,6 +7,7 @@ const profile = require('./controllers/profile');
 const image = require('./controllers/image');
 const initdb = require('./controllers/initdb');
 const auth = require('./controllers/authorization');
+const compression = require('compression');
 
 // postgres
 const knex = require('knex');
@@ -35,6 +36,7 @@ require('dotenv').config();
 const app = express();
 app.use(express.json());
 app.use(cors());
+// app.use(compression());
 
 // debugging express
 if (process.env.APP_DEBUG) {
