@@ -1,0 +1,30 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  my-rank-function
+Transform:
+- AWS::Serverless-2016-10-31
+Resources:
+  MyRankFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      PackageType: Image
+      Architectures:
+        - x86_64
+      Events:
+        MyRankFunction:
+          Type: Api
+          Properties:
+            Path: /
+            Method: get
+    Metadata:
+      DockerTag: nodejs20.x-v1
+      DockerContext: ./my-rank-function
+      Dockerfile: Dockerfile
+
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  MyRankFunctionApi:
+    Description: "API Gateway endpoint URL for Prod stage for my-rank-function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
