@@ -13,7 +13,7 @@ How to start a server:
 - docker-compose down (to remove the containers)
 
 Required steps before:
-1. Database based on POSTGRES (or any other relational database compatible with knex.js sql builder module) - might be deployed for you: just check 'deployment-*' directories:
+1. Database based on POSTGRES (or any other relational database compatible with knex.js sql builder module) - might be deployed for you (check 'deployment-*' directories).
 Options to create db schema:
 - execute postgres commands manually:
 createdb 'smart-brain' - to create postgres db
@@ -47,3 +47,6 @@ APP_PORT=3001 - application port to listen for requests
 APP_DEBUG=undefined - application and db errors are set to be displayed
 APP_INIT=undefined () - db schema would be created (see above)
 APP_JWT_SECRET - secret for jwt tokens
+
+5. There is a AWS lambda function at the directory ./deployment-AWS_CDK_Lambda to be deployed as well.
+Use instructions from its README.md file. REACT_APP_LAMBDA_UL variable should be set on a frontend part of the application (see above the github link of it) once you deployed the lambda function (there will be output value of Cloudformation stack).
