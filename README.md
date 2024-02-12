@@ -1,4 +1,5 @@
-## This is NodeJS backend for an application named **my-face-recognition** https://github.com/MFarkha/my-face-recognition .
+## Application 'my-face-recognition-api'
+This is NodeJS backend for an frontend application named **my-face-recognition** https://github.com/MFarkha/my-face-recognition .
 Description of API:
     - /signin - POST success/fail
     - /register - POST new user/fail
