@@ -1,6 +1,6 @@
 {
   "name": "my-face-recognition-api",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "backend for my-face-recognition react app",
   "main": "server.js",
   "scripts": {
