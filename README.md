@@ -6,11 +6,11 @@ Description of API:
     - /profile/:id - GET user/fail
     - /image - PUT  updated user info/ fail
 
-## How to start the server:
+### How to start the server
     - `npm start`. (if you have set up a Postgres database)
     - `docker-compose up --build` (you have to have Docker installed, no database setup though required). To remove the containers: docker-compose down
 
-## Required steps before:
+### Required steps before
 1. Database based on POSTGRES (or any other relational database compatible with knex.js sql builder module) - might be deployed for you (check 'deployment-*' directories).
 Options to create db schema:
     - execute postgres commands manually:
@@ -48,3 +48,6 @@ Hint: leverage 'buildspec.yaml' located at the root of the application to config
 
 5. There is a AWS lambda function at the directory ./deployment-AWS_CDK_Lambda to be deployed as well.
 Use instructions from its README.md file. `REACT_APP_LAMBDA_UL` variable should be set on a frontend part of the application (see above the github link of it) once you deployed the lambda function (there will be output value of Cloudformation stack).
+
+## Contributors
+The entire idea of the app is from [Zero to Mastery course](https://academy.zerotomastery.io/courses/enrolled/697434)
